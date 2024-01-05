@@ -109,6 +109,7 @@ rosbag play dlo_test.bag
 ### Result
 
 Video
+
 [![Video Label](https://i.ytimg.com/vi/fEiYgXSPHMs/hqdefault.jpg?sqp=-oaymwE2CNACELwBSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARhaIFooWjAP&rs=AOn4CLD7Mr-YElZNirA2ZohOTk13Vcky9Q)](https://youtu.be/fEiYgXSPHMs)
 
 | Top view                              | Side view                             |
