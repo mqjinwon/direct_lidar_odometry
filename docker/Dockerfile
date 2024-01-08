@@ -5,9 +5,9 @@
 FROM osrf/ros:noetic-desktop-full
 
 # Install additional dependencies
-RUN apt-get update && \
-    apt-get install -y libomp-dev libpcl-dev libeigen3-dev && \
-    apt-get install python3-catkin-tools git
+RUN apt-get -y update && \
+    apt-get install -y --no-install-recommends libomp-dev libpcl-dev libeigen3-dev && \
+    apt-get install -y python3-catkin-tools git
 
 # Create a working directory (you can customize the path)
 WORKDIR /root/workspace
