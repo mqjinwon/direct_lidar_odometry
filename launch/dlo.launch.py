@@ -11,9 +11,9 @@ def generate_launch_description():
     # Set default arguments
     ns = LaunchConfiguration('robot_namespace', default='robot')
     
-    rviz = LaunchConfiguration('rviz', default='true')
-    pointcloud_topic = LaunchConfiguration('pointcloud_topic', default='lidar')
-    imu_topic = LaunchConfiguration('imu_topic', default='imu')
+    rviz = LaunchConfiguration('rviz', default='false')
+    pointcloud_topic = LaunchConfiguration('pointcloud_topic', default='/ouster/points')
+    imu_topic = LaunchConfiguration('imu_topic', default='/ouster/imu')
     
     # Define arguments
     declare_rviz_arg = DeclareLaunchArgument(
@@ -35,14 +35,14 @@ def generate_launch_description():
     # Load parameters
     dlo_yaml_path = PathJoinSubstitution([current_pkg, 'cfg', 'dlo.yaml'])
     dlo_params_yaml_path = PathJoinSubstitution([current_pkg, 'cfg', 'params.yaml'])
-
+    
     # DLO Odometry Node
     dlo_odom_node = Node(
         package='direct_lidar_odometry',
         executable='dlo_odom_node',
         output='screen',
         parameters=[dlo_yaml_path, dlo_params_yaml_path],
-        namespace=ns,
+        # namespace=ns,
         remappings=[
             ('pointcloud', pointcloud_topic),
             ('imu', imu_topic),
@@ -53,19 +53,20 @@ def generate_launch_description():
         ],
     )
 
-    # dlo Mapping Node
+    # DLO Mapping Node
     dlo_map_node = Node(
         package='direct_lidar_odometry',
         executable='dlo_map_node',
         output='screen',
         parameters=[dlo_yaml_path, dlo_params_yaml_path],
-        namespace=ns,
+        # namespace=ns,
         remappings=[
             ('keyframe', 'dlo/odom_node/pointcloud/keyframe'),
+            ('map', 'dlo/map_node/map')
         ],
     )
 
-    # RViz node
+    # Rviz node
     rviz_config_path = PathJoinSubstitution([current_pkg, 'launch', 'dlo.rviz'])
     rviz_node = Node(
         package='rviz2',

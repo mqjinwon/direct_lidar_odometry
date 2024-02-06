@@ -35,7 +35,7 @@ dlo::MapNode::MapNode() : Node("dlo_map_node") {
 
     this->keyframe_sub =
         this->create_subscription<sensor_msgs::msg::PointCloud2>(
-            "keyframes", 1,
+            "keyframe", 1,
             std::bind(&dlo::MapNode::keyframeCB, this, std::placeholders::_1),
             keyframe_sub_opt);
 
@@ -70,9 +70,13 @@ dlo::MapNode::~MapNode() {}
  **/
 
 void dlo::MapNode::getParams() {
-    dlo::declare_param(this, "odom/odom_frame", this->odom_frame, "odom");
-    dlo::declare_param(this, "map/sparse/frequency", this->publish_freq_, 1.0);
-    dlo::declare_param(this, "map/sparse/leafSize", this->leaf_size_, 0.5);
+    dlo::declare_param(this, "dlo/mapNode/publishFullMap",
+                       this->publish_full_map_, true);
+    dlo::declare_param(this, "dlo/mapNode/odom_frame", this->odom_frame,
+                       "odom");
+    dlo::declare_param(this, "dlo/mapNode/publishFreq", this->publish_freq_,
+                       1.0);
+    dlo::declare_param(this, "dlo/mapNode/leafSize", this->leaf_size_, 0.25);
 
     // ros2 namespace
     std::string ns = this->get_namespace();

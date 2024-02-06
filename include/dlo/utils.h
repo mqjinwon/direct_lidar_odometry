@@ -14,4 +14,4 @@ void declare_param(rclcpp::Node* node, const std::string param_name, T& param,
     node->get_parameter(param_name, param);
 }
 
-}  // namespace dlio
+}  // namespace dlo

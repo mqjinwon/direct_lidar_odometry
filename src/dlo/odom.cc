@@ -216,7 +216,7 @@ dlo::OdomNode::~OdomNode() {}
 
 void dlo::OdomNode::getParams() {
     // Version
-    dlo::declare_param(this, "version", this->version_, "0.0.0");
+    dlo::declare_param(this, "dlo/version", this->version_, "1.4.3");
 
     // Frames
     dlo::declare_param(this, "dlo/odomNode/odom_frame", this->odom_frame,
@@ -233,13 +233,13 @@ void dlo::OdomNode::getParams() {
     this->child_frame = ns + "/" + this->child_frame;
 
     // Gravity alignment
-    dlo::declare_param(this, "dlo/gravityAlign", this->gravity_align_, false);
+    dlo::declare_param(this, "dlo/gravityAlign", this->gravity_align_, true);
 
     // Keyframe Threshold
     dlo::declare_param(this, "dlo/odomNode/keyframe/threshD",
-                       this->keyframe_thresh_dist_, 0.1);
+                       this->keyframe_thresh_dist_, 5.0);
     dlo::declare_param(this, "dlo/odomNode/keyframe/threshR",
-                       this->keyframe_thresh_rot_, 1.0);
+                       this->keyframe_thresh_rot_, 45.0);
 
     // Submap
     dlo::declare_param(this, "dlo/odomNode/submap/keyframe/knn",
@@ -266,7 +266,7 @@ void dlo::OdomNode::getParams() {
 
     // Crop Box Filter
     dlo::declare_param(this, "dlo/odomNode/preprocessing/cropBoxFilter/use",
-                       this->crop_use_, false);
+                       this->crop_use_, true);
     dlo::declare_param(this, "dlo/odomNode/preprocessing/cropBoxFilter/size",
                        this->crop_size_, 1.0);
 
@@ -274,20 +274,20 @@ void dlo::OdomNode::getParams() {
     dlo::declare_param(this, "dlo/odomNode/preprocessing/voxelFilter/scan/use",
                        this->vf_scan_use_, true);
     dlo::declare_param(this, "dlo/odomNode/preprocessing/voxelFilter/scan/res",
-                       this->vf_scan_res_, 0.05);
+                       this->vf_scan_res_, 0.25);
     dlo::declare_param(this,
                        "dlo/odomNode/preprocessing/voxelFilter/submap/use",
-                       this->vf_submap_use_, false);
+                       this->vf_submap_use_, true);
     dlo::declare_param(this,
                        "dlo/odomNode/preprocessing/voxelFilter/submap/res",
-                       this->vf_submap_res_, 0.1);
+                       this->vf_submap_res_, 0.5);
 
     // Adaptive Parameters
     dlo::declare_param(this, "dlo/adaptiveParams", this->adaptive_params_use_,
-                       false);
+                       true);
 
     // IMU
-    dlo::declare_param(this, "dlo/imu/use", this->imu_use_, false);
+    dlo::declare_param(this, "dlo/imu/use", this->imu_use_, true);
     dlo::declare_param(this, "dlo/odomNode/imu/calibTime",
                        this->imu_calib_time_, 3);
     dlo::declare_param(this, "dlo/odomNode/imu/bufferSize",
@@ -295,41 +295,38 @@ void dlo::OdomNode::getParams() {
 
     // GICP
     dlo::declare_param(this, "dlo/odomNode/gicp/minNumPoints",
-                       this->gicp_min_num_points_, 100);
+                       this->gicp_min_num_points_, 10);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2s/kCorrespondences",
-                       this->gicps2s_k_correspondences_, 20);
+                       this->gicps2s_k_correspondences_, 10);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2s/maxCorrespondenceDistance",
                        this->gicps2s_max_corr_dist_,
-                       std::sqrt(std::numeric_limits<double>::max()));
+                       1.0);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2s/maxIterations",
-                       this->gicps2s_max_iter_, 64);
+                       this->gicps2s_max_iter_, 32);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2s/transformationEpsilon",
-                       this->gicps2s_transformation_ep_, 0.0005);
+                       this->gicps2s_transformation_ep_, 0.01);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2s/euclideanFitnessEpsilon",
-                       this->gicps2s_euclidean_fitness_ep_,
-                       -std::numeric_limits<double>::max());
+                       this->gicps2s_euclidean_fitness_ep_, 0.01);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2s/ransac/iterations",
-                       this->gicps2s_ransac_iter_, 0);
+                       this->gicps2s_ransac_iter_, 5);
     dlo::declare_param(this,
                        "dlo/odomNode/gicp/s2s/ransac/outlierRejectionThresh",
-                       this->gicps2s_ransac_inlier_thresh_, 0.05);
+                       this->gicps2s_ransac_inlier_thresh_, 1.0);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2m/kCorrespondences",
                        this->gicps2m_k_correspondences_, 20);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2m/maxCorrespondenceDistance",
-                       this->gicps2m_max_corr_dist_,
-                       std::sqrt(std::numeric_limits<double>::max()));
+                       this->gicps2m_max_corr_dist_, 0.5);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2m/maxIterations",
-                       this->gicps2m_max_iter_, 64);
+                       this->gicps2m_max_iter_, 32);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2m/transformationEpsilon",
-                       this->gicps2m_transformation_ep_, 0.0005);
+                       this->gicps2m_transformation_ep_, 0.01);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2m/euclideanFitnessEpsilon",
-                       this->gicps2m_euclidean_fitness_ep_,
-                       -std::numeric_limits<double>::max());
+                       this->gicps2m_euclidean_fitness_ep_, 0.01);
     dlo::declare_param(this, "dlo/odomNode/gicp/s2m/ransac/iterations",
-                       this->gicps2m_ransac_iter_, 0);
+                       this->gicps2m_ransac_iter_, 5);
     dlo::declare_param(this,
                        "dlo/odomNode/gicp/s2m/ransac/outlierRejectionThresh",
-                       this->gicps2m_ransac_inlier_thresh_, 0.05);
+                       this->gicps2m_ransac_inlier_thresh_, 1.0);
 }
 
 /**
