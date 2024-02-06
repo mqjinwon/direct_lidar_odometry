@@ -9,51 +9,45 @@
 
 #include "dlo/dlo.h"
 
-class dlo::MapNode {
+class dlo::MapNode: public rclcpp::Node {
+   public:
+    MapNode();
+    ~MapNode();
 
-public:
+    static void abort() { abort_ = true; }
 
-  MapNode(ros::NodeHandle node_handle);
-  ~MapNode();
+    void start();
+    void stop();
 
-  static void abort() {
-    abort_ = true;
-  }
+   private:
+    void abortTimerCB();
+    void publishTimerCB();
 
-  void start();
-  void stop();
+    void keyframeCB(
+        const sensor_msgs::msg::PointCloud2::ConstSharedPtr& keyframe);
 
-private:
+    bool savePcd(direct_lidar_odometry::save_pcd::Request & req,
+                 direct_lidar_odometry::save_pcd::Response & res);
 
-  void abortTimerCB(const ros::TimerEvent& e);
-  void publishTimerCB(const ros::TimerEvent& e);
+    void getParams();
 
-  void keyframeCB(const sensor_msgs::PointCloud2ConstPtr& keyframe);
+    rclcpp::TimerBase::SharedPtr abort_timer;
+    rclcpp::TimerBase::SharedPtr publish_timer;
 
-  bool savePcd(direct_lidar_odometry::save_pcd::Request& req,
-               direct_lidar_odometry::save_pcd::Response& res);
+    rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr keyframe_sub;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;
 
-  void getParams();
+    rclcpp::Service<direct_lidar_inertial_odometry::srv::save_pcd>::SharedPtr save_pcd_srv;
 
-  ros::NodeHandle nh;
-  ros::Timer abort_timer;
-  ros::Timer publish_timer;
+    pcl::PointCloud<PointType>::Ptr dlo_map;
+    pcl::VoxelGrid<PointType> voxelgrid;
 
-  ros::Subscriber keyframe_sub;
-  ros::Publisher map_pub;
+    rclcpp::Time map_stamp;
+    std::string odom_frame;
 
-  ros::ServiceServer save_pcd_srv;
+    bool publish_full_map_;
+    double publish_freq_;
+    double leaf_size_;
 
-  pcl::PointCloud<PointType>::Ptr dlo_map;
-  pcl::VoxelGrid<PointType> voxelgrid;
-
-  ros::Time map_stamp;
-  std::string odom_frame;
-
-  bool publish_full_map_;
-  double publish_freq_;
-  double leaf_size_;
-
-  static std::atomic<bool> abort_;
-
+    static std::atomic<bool> abort_;
 };
