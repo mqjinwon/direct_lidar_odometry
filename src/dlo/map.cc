@@ -70,13 +70,9 @@ dlo::MapNode::~MapNode() {}
  **/
 
 void dlo::MapNode::getParams() {
-    this->declare_parameter<std::string>("odom/odom_frame", "odom");
-    this->declare_parameter<double>("map/sparse/frequency", 1.0);
-    this->declare_parameter<double>("map/sparse/leafSize", 0.5);
-
-    this->get_parameter("odom/odom_frame", this->odom_frame);
-    this->get_parameter("map/sparse/frequency", this->publish_freq_);
-    this->get_parameter("map/sparse/leafSize", this->leaf_size_);
+    dlo::declare_param(this, "odom/odom_frame", this->odom_frame, "odom");
+    dlo::declare_param(this, "map/sparse/frequency", this->publish_freq_, 1.0);
+    dlo::declare_param(this, "map/sparse/leafSize", this->leaf_size_, 0.5);
 
     // ros2 namespace
     std::string ns = this->get_namespace();

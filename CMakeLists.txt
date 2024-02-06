@@ -27,6 +27,12 @@ find_package(pcl_ros REQUIRED) # pcl_conversion
 find_package(PCL REQUIRED COMPONENTS common io)
 find_package(Eigen3 REQUIRED)
 find_package(OpenMP)
+find_package(Threads REQUIRED)
+
+set(CMAKE_BUILD_TYPE "Release")
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 
 # Include directories
 include_directories(include ${PCL_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS})
@@ -56,12 +62,12 @@ endif()
 target_include_directories(nano_gicp PUBLIC include ${PCL_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
 
 # Executables
-# add_executable(dlo_odom_node src/dlo/odom_node.cc src/dlo/odom.cc)
-# ament_target_dependencies(dlo_odom_node rclcpp std_msgs sensor_msgs geometry_msgs)
-# target_link_libraries(dlo_odom_node nano_gicp ${PCL_LIBRARIES} ${cpp_typesupport_target})
-# if(OPENMP_FOUND)
-#   target_link_libraries(dlo_odom_node OpenMP::OpenMP_CXX)
-# endif()
+add_executable(dlo_odom_node src/dlo/odom_node.cc src/dlo/odom.cc)
+ament_target_dependencies(dlo_odom_node rclcpp std_msgs sensor_msgs geometry_msgs)
+target_link_libraries(dlo_odom_node nano_gicp ${PCL_LIBRARIES} Threads::Threads ${cpp_typesupport_target})
+if(OPENMP_FOUND)
+  target_link_libraries(dlo_odom_node OpenMP::OpenMP_CXX)
+endif()
 
 add_executable(dlo_map_node src/dlo/map_node.cc src/dlo/map.cc)
 ament_target_dependencies(dlo_map_node rclcpp std_msgs sensor_msgs geometry_msgs)
@@ -76,7 +82,7 @@ ament_package()
 install(TARGETS
   nanoflann
   nano_gicp
-  # dlo_odom_node
+  dlo_odom_node
   dlo_map_node
   DESTINATION lib/${PROJECT_NAME})
 
