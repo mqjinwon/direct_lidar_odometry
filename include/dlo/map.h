@@ -9,7 +9,7 @@
 
 #include "dlo/dlo.h"
 
-class dlo::MapNode: public rclcpp::Node {
+class dlo::MapNode : public rclcpp::Node {
    public:
     MapNode();
     ~MapNode();
@@ -26,18 +26,21 @@ class dlo::MapNode: public rclcpp::Node {
     void keyframeCB(
         const sensor_msgs::msg::PointCloud2::ConstSharedPtr& keyframe);
 
-    bool savePcd(direct_lidar_odometry::save_pcd::Request & req,
-                 direct_lidar_odometry::save_pcd::Response & res);
+    bool savePcd(
+        std::shared_ptr<direct_lidar_odometry::srv::SavePCD::Request> req,
+        std::shared_ptr<direct_lidar_odometry::srv::SavePCD::Response> res);
 
     void getParams();
 
     rclcpp::TimerBase::SharedPtr abort_timer;
     rclcpp::TimerBase::SharedPtr publish_timer;
 
+    rclcpp::CallbackGroup::SharedPtr keyframe_cb_group, save_pcd_cb_group;
     rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr keyframe_sub;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;
 
-    rclcpp::Service<direct_lidar_inertial_odometry::srv::save_pcd>::SharedPtr save_pcd_srv;
+    rclcpp::Service<direct_lidar_odometry::srv::SavePCD>::SharedPtr
+        save_pcd_srv;
 
     pcl::PointCloud<PointType>::Ptr dlo_map;
     pcl::VoxelGrid<PointType> voxelgrid;
