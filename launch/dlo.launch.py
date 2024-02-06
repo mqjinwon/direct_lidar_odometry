@@ -65,6 +65,14 @@ def generate_launch_description():
             ('map', 'dlo/map_node/map')
         ],
     )
+    
+    # static tf between odom and os_sensor
+    tf_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=['0', '0', '0.3', '0', '0', '0', 'base_link', 'os_lidar'],
+        output='screen'
+    )
 
     # Rviz node
     rviz_config_path = PathJoinSubstitution([current_pkg, 'launch', 'dlo.rviz'])
@@ -83,5 +91,6 @@ def generate_launch_description():
         declare_imu_topic_arg,
         dlo_odom_node,
         dlo_map_node,
-        rviz_node
+        rviz_node,
+        tf_node
     ])
